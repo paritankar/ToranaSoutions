@@ -119,7 +119,7 @@ else:
 
 
 #Export RegressionPack
-execute_api = '{base_url}/rule'.format(base_url=api_base_url)
+execute_api = '{base_url}/regressionpack'.format(base_url=api_base_url)
 #Create the request body
 requestBody = {}
 requestBody['regressionIds']=192263
@@ -135,4 +135,4 @@ if '200' in str(export_regressionpack_response):
     open(filename, 'wb').write(export_regressionpack_response.content)
 
 else:
-    print ("error encountered in Exporting Rule")
+    print ("error encountered in Exporting regressionpack")
