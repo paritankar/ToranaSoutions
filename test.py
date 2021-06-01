@@ -72,7 +72,6 @@ if run_get_status== 'success':
         print(run_status_json)
         #set get summary success flag
         run_get_summary='success'
-        print(run_get_summary)
     else:
         print ("error encountered in getting status")
         #set get summary error flag
