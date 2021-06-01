@@ -14,7 +14,7 @@ api_base_url='http://192.168.1.30:8400/ice/api/2.0'
 execute_rule_api = '{base_url}/rulerun'.format(base_url=api_base_url)
 #create a request body 
 requestBody = {}
-requestBody['ruleId']=255
+requestBody['ruleId']=744768
 requestBody['parameter']=[{}]
 requestBody['parameter'][0]={}
 requestBody['parameter'][0]['key']=''
@@ -37,9 +37,7 @@ rule_run_response = requests.request("POST", execute_rule_api, headers=requestHe
 if '200' in str(rule_run_response):
     rule_run_json = rule_run_response.json()
     print("The run rule api is triggered")
-    time.sleep(2)
     print("The rule is running over the following instanceId")
-    time.sleep(2)
     print(rule_run_json)
     #set get status success  flag
     run_get_status='success'
@@ -58,9 +56,15 @@ if run_get_status== 'success':
 
     if '200' in str(run_status_response):
         run_status_json = run_status_response.json()
-        time.sleep(1)
+        while run_status_json['status'] == 'Running':
+            run_status_response = requests.request("GET", run_status_api, headers=requestHeader, data={})
+            if '200' in str(run_status_response):
+                run_status_json = run_status_response.json()
+            else:
+                print ("error encountered in getting status")
+                #set get summary error flag
+                run_get_summary='failed'
         print("The rule status:")
-        time.sleep(1)
         print(run_status_json)
         #set get summary success flag
         run_get_summary='success'
@@ -76,10 +80,7 @@ if run_get_summary== 'success':
 
     if '200' in str(rule_exe_summ_response):
         rule_exe_summ_json=rule_exe_summ_response.json()
-        #rule_exe_summ_json=json.dumps(rule_exe_summ_response.json(), indent=4,separators=(',', ': '), ensure_ascii=False)
-        time.sleep(1)
         print("The result summary of the rule")
-        time.sleep(5)
         print(rule_exe_summ_json)
     else:
         print("error encountered in getting rule execution summary")
