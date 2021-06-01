@@ -8,7 +8,7 @@ requestHeader['Content-Type'] = 'application/json'
 requestHeader['client'] = 'Jenkins'
 requestHeader['repository'] = 'DEMO-RETAIL-MS'
 
-api_base_url='http://96.56.44.182:8400/ice/api/2.0'
+api_base_url='http://192.168.1.30:8400/ice/api/2.0'
 #execute the regressionpack
 execute_regressionpack_api = '{base_url}/regressionrun'.format(base_url=api_base_url)
 #create a request body 
@@ -37,7 +37,7 @@ requestBody['connection']['target'][0]['replace']=''
 requestBody['connection']['target'][0]['seq']=[]
 
 exe_requestbody=json.dumps(requestBody)
-print(exe_requestbody)
+
 #Trigger regressionpack Run API. 
 regressionpack_run_response = requests.request("POST", execute_regressionpack_api, headers=requestHeader, data=exe_requestbody)
 print(regressionpack_run_response)
@@ -62,6 +62,15 @@ if regressionpack_get_status== 'success':
 
     if '200' in str(run_status_response):
         run_status_json = run_status_response.json()
+        while run_status_json['status'] == 'Running':
+            run_status_response = requests.request("GET", run_status_api, headers=requestHeader, data={})
+            if '200' in str(run_status_response):
+                run_status_json=run_status_response.json()
+            else:
+                print ("error encountered in getting status")
+                #set get summary error flag
+                run_get_summary='failed'
+        print("The Regression Pack status:")
         print(run_status_json)
         #set get summary success flag
         run_get_summary='success'
@@ -78,7 +87,7 @@ if run_get_summary== 'success':
 
     if '200' in str(regressionpack_exe_summ_response):
         regressionpack_exe_summ_json=regressionpack_exe_summ_response.json()
-        #regressionpack_exe_summ_json=json.dumps(rule_exe_summ_response.json(), indent=4,separators=(',', ': '), ensure_ascii=False)
+        print("The result summary of the Regression Pack")
         print(regressionpack_exe_summ_json)
     else:
         print("error encountered in getting rule execution summary")

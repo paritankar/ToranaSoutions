@@ -1,6 +1,5 @@
 import requests
 import json
-import time
 
 #setup url and token
 requestHeader = {}
